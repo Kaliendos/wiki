@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Главная страница</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Owl Carousel CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
+    <style>
+        .category-section {
+            margin-bottom: 40px;
+        }
+        .category-title {
+            color: #333;
+            border-bottom: 2px solid #007bff;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        .subcategory-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .subcategory-item {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            width: calc(33.333% - 10px);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .subcategory-item:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .subcategory-item h4 {
+            margin-bottom: 10px;
+            color: #007bff;
+        }
+        .subcategory-item p {
+            color: #6c757d;
+            font-size: 14px;
+            margin-bottom: 0;
+        }
+        .articles-carousel {
+            margin: 40px 0;
+            padding: 20px 0;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+        .carousel-title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+        .article-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            height: 100%;
+        }
+        .article-card h5 {
+            color: #007bff;
+            margin-bottom: 10px;
+        }
+        .article-card p {
+            color: #6c757d;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+        .article-meta {
+            display: flex;
+            justify-content: space-between;
+            color: #999;
+            font-size: 12px;
+            border-top: 1px solid #dee2e6;
+            padding-top: 10px;
+        }
+        .views-count {
+            color: #28a745;
+        }
+        .owl-nav button {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #007bff !important;
+            color: white !important;
+            width: 40px;
+            height: 40px;
+            border-radius: 50% !important;
+            font-size: 20px !important;
+        }
+        .owl-prev {
+            left: -20px;
+        }
+        .owl-next {
+            right: -20px;
+        }
+        .owl-dots {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Навигация -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">Мой Сайт</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="/">Главная</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/articles/">Статьи</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/about/">О нас</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Основной контент -->
+    <div class="container my-5">
+        <!-- Карусель популярных статей -->
+        <div class="articles-carousel">
+            <h2 class="carousel-title">🔥 Самые популярные статьи</h2>
+            <div class="owl-carousel owl-theme">
+                {% for article in articles %}
+                <div class="item">
+                    <div class="article-card">
+                        <h5>{{ article.title }}</h5>
+                        <p>{{ article.description|truncatechars:100 }}</p>
+                        <div class="article-meta">
+                            <span class="views-count">👁 {{ article.views }} просмотров</span>
+                            <span>📅 {{ article.created_at|date:"d.m.Y" }}</span>
+                        </div>
+                        <a href="{% url 'article_detail' article.slug %}" class="btn btn-sm btn-outline-primary mt-2">Читать далее</a>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12 text-center">
+                    <p>Статьи пока не добавлены</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Категории и подкатегории -->
+        <h1 class="text-center mb-5">Категории статей</h1>
+
+        {% for category in categories %}
+        <div class="category-section">
+            <h2 class="category-title">{{ category.name }}</h2>
+
+            {% if category.description %}
+            <p class="text-muted mb-3">{{ category.description }}</p>
+            {% endif %}
+
+            <div class="subcategory-list">
+                {% for subcategory in category.subcategories.all %}
+                <div class="subcategory-item">
+                    <h4>
+                        <a href="{% url 'subcategory_detail' subcategory.slug %}" class="text-decoration-none">
+                            {{ subcategory.name }}
+                        </a>
+                    </h4>
+                    {% if subcategory.description %}
+                    <p>{{ subcategory.description|truncatechars:100 }}</p>
+                    {% endif %}
+                    <a href="{% url 'subcategory_detail' subcategory.slug %}" class="btn btn-sm btn-primary">
+                        Перейти →
+                    </a>
+                </div>
+                {% empty %}
+                <div class="col-12">
+                    <p class="text-muted">В этой категории пока нет подкатегорий</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% empty %}
+        <div class="text-center">
+            <p class="lead">Категории пока не добавлены</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Подвал -->
+    <footer class="bg-dark text-white py-4 mt-5">
+        <div class="container text-center">
+            <p>&copy; 2024 Мой Сайт. Все права защищены.</p>
+        </div>
+    </footer>
+
+    <!-- Скрипты -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+
+    <script>
+        $(document).ready(function(){
+            $('.owl-carousel').owlCarousel({
+                loop: true,
+                margin: 20,
+                nav: true,
+                dots: true,
+                autoplay: true,
+                autoplayTimeout: 5000,
+                autoplayHoverPause: true,
+                responsive: {
+                    0: {
+                        items: 1
+                    },
+                    600: {
+                        items: 2
+                    },
+                    1000: {
+                        items: 4
+                    }
+                },
+                navText: ['←', '→']
+            });
+        });
+    </script>
+</body>
+</html>
