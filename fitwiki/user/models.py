@@ -17,6 +17,7 @@ class User(AbstractUser):
     avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
     website = models.URLField(blank=True)
 
+
     def can_edit_wiki(self):
         return self.role in ['editor', 'admin']
 

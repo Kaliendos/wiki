@@ -1,0 +1,125 @@
+{% extends 'base.html'%}
+
+{% block 'content'%}
+    <!-- Навигация -->
+
+<style>
+    .article-content {
+        font-size: 1.1rem;
+        line-height: 1.7;
+    }
+    .category-section{
+        border-bottom: 1px solid gray;
+    }
+
+    .article-content h2 {
+        margin-top: 2rem;
+        margin-bottom: 1rem;
+        font-size: 1.8rem;
+    }
+    .subcategory-item{
+        padding: 1em;
+    }
+
+    .article-content h3 {
+        margin-top: 1.5rem;
+        margin-bottom: 0.8rem;
+        font-size: 1.4rem;
+    }
+
+    .article-content img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 0.5rem;
+        margin: 1.5rem 0;
+    }
+
+</style>
+    <!-- Основной контент -->
+
+        <!-- Карусель популярных статей -->
+
+             <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+            <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+ <script>
+        $(document).ready(function(){
+            $('.owl-carousel').owlCarousel({
+                loop: true,
+                margin: 20,
+                nav: true,
+                dots: true,
+                autoplay: true,
+                autoplayTimeout: 5000,
+                autoplayHoverPause: true,
+                responsive: {
+                    0: {
+                        items: 1
+                    },
+                    600: {
+                        items: 2
+                    },
+                    1000: {
+                        items: 4
+                    }
+                },
+                navText: ['←', '→']
+            });
+        });
+    </script>
+               <div class="articles-carousel">
+            <h2 class="carousel-title">🔥 Горячее</h2>
+            <div class="owl-carousel owl-theme">
+                {% for article in articles %}
+                <div class="item">
+                    <div class="article-card">
+                        <h5>{{ article.title }}</h5>
+                        <p>{{ article.description|truncatechars:100 }}</p>
+                        <div class="article-meta">
+                            <span class="views-count">👁 {{ article.views }} просмотров</span>
+                            <span>📅 {{ article.created_at|date:"d.m.Y" }}</span>
+                        </div>
+                        <a href="{% url 'article_detail' article.slug %}" class="btn btn-sm btn-outline-primary mt-2">Читать далее</a>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="col-12 text-center">
+                    <p>Статьи пока не добавлены</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        <!-- Категории и подкатегории -->
+        <h1 class="text-center mb-5">Категории</h1>
+
+        {% for category in categories %}
+        <div class="category-section">
+            <h2 class="category-title">{{ category.name }}</h2>
+
+            <div class="subcategory-list">
+                {% for subcategory in category.subcategories.all %}
+                <div class="subcategory-item">
+                    <h5>
+                            {{ subcategory.name }}
+                    </h5>
+                    {% for article in  subcategory.article.all %}
+                   <a href="{% url 'article_detail' article.slug %}" class="btn btn-sm btn-outline-primary mt-2">{{article}}</a>
+                    {% endfor %}
+
+                </div>
+                {% empty %}
+                <div class="col-12">
+                    <p class="text-muted">В этой категории пока нет подкатегорий</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+        {% empty %}
+        <div class="text-center">
+            <p class="lead">Категории пока не добавлены</p>
+        </div>
+        {% endfor %}
+
+
+
+{% endblock %}

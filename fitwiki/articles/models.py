@@ -1,7 +1,10 @@
+from ckeditor_uploader.fields import RichTextUploadingField
 from django.db import models
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from django_summernote.fields import SummernoteTextField
+from markdownx.models import MarkdownxField
 
 User = get_user_model()
 
@@ -48,10 +51,11 @@ class WikiArticle(models.Model):
     """Статья в базе знаний"""
     title = models.CharField(max_length=300)
     slug = models.SlugField(unique=True)
-    content = models.TextField()
+    content = RichTextUploadingField(blank=True, null=True)  # с загрузкой изображений
 
     # Метаданные
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
+    subcategory = models.ForeignKey(SubCategory, on_delete=models.SET_NULL, null=True, related_name="article")
     tags = models.ManyToManyField(Tag, blank=True)
 
     # Автор и даты
@@ -85,7 +89,7 @@ class BlogArticle(models.Model):
     """Авторская статья (блог)"""
     title = models.CharField(max_length=300)
     slug = models.SlugField(unique=True)
-    content = models.TextField()
+    content = SummernoteTextField()
 
     # Связи
     author = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -99,6 +103,7 @@ class BlogArticle(models.Model):
     published_at = models.DateTimeField(null=True, blank=True)
 
     views = models.PositiveIntegerField(default=0)
+    tags = models.ManyToManyField(Tag, blank=True)
 
     class Meta:
         ordering = ['-created_at']
@@ -108,8 +113,18 @@ class BlogArticle(models.Model):
 
     def get_absolute_url(self):
         from django.urls import reverse
-        return reverse('blogs:detail', args=[self.slug])
+        return reverse('detail', args=[self.slug])
 
+
+class ArticleBlogImage(models.Model):
+    """Изображения для статьи"""
+    article = models.ForeignKey(BlogArticle, on_delete=models.CASCADE, related_name='images')
+    image = models.ImageField(upload_to='articles/%Y/%m/%d/')
+    caption = models.CharField(max_length=200, blank=True)
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Image for {self.article.title}"
 
 # apps/comments/models.py
 class Comment(models.Model):
