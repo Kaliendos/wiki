@@ -22,5 +22,6 @@ urlpatterns = [
     path("", include("articles.urls")),
     path('ckeditor/', include('ckeditor_uploader.urls')),
     path('summernote/', include('django_summernote.urls')),
+    path('accounts/', include('user.urls')),
 
 ]

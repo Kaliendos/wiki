@@ -1,5 +1,5 @@
-<!DOCTYPE html>
-<html lang="ru">
+{% load static %}
+<html lang="ru" >
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,75 +9,9 @@
     <!-- Owl Carousel CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.theme.default.min.css">
-    <style>
-         .article-card{
-            border-left: 5px solid rgb(0, 195, 255);
-             padding-left: 1em;
-        }
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+     <link rel="stylesheet" href="{% static 'css/main.css' %}">
 
-    .article-content blockquote {
-        padding: 1rem;
-        margin: 1.5rem 0;
-        border-left: 4px solid #0d6efd;
-        background-color: #f8f9fa;
-        font-style: italic;
-    }
-
-    .article-content pre {
-        background-color: #f8f9fa;
-        padding: 1rem;
-        border-radius: 0.5rem;
-        overflow-x: auto;
-    }
-
-    .article-content code {
-        background-color: #f8f9fa;
-        padding: 0.2rem 0.4rem;
-        border-radius: 0.25rem;
-        font-size: 0.9rem;
-    }
-
-    .toc {
-
-        overflow-y: auto;
-        background: rgb(65,105,225);
-        max-width: 250px;
-        border-radius: 25px;
-        padding: 30px;
-    }
-
-    .toc ul {
-        list-style: none;
-        padding-left: 0;
-
-    }
-
-    .toc li {
-        margin-bottom: 0.5rem;
-           color: white;
-    }
-
-    .toc a {
-        text-decoration: none;
-        color: #6c757d;
-        transition: color 0.2s;
-           color: white;
-    }
-
-    .toc a:hover {
-        color: #0d6efd;
-    }
-
-    .toc .h2 {
-        margin-left: 0;
-        font-weight: 500;
-    }
-
-    .toc .h3 {
-        margin-left: 1rem;
-        font-size: 0.95rem;
-    }
-    </style>
 
 </head>
 <body>
@@ -94,8 +28,23 @@
                         <a class="nav-link" href="/">Главная</a>
                     </li>
                      <li class="nav-item">
-                        <a class="nav-link" href="blog/">Сообщество</a>
+                        <a class="nav-link" href="/blog">Сообщество</a>
                     </li>
+                       {% if user.is_authenticated %}
+                     <li class="nav-item">
+                        <span>{{ user.username }}!</span>
+                          <form method="post" action="{% url 'logout' %}" style="display: inline;">
+                    {% csrf_token %}
+                              <button type="submit">Выйти</button></form>
+                     </li>
+                    {% else %}
+                       <li class="nav-item">
+                            <a href="{% url 'login' %}" style="color: white; text-decoration: none;">Войти</a>
+                       </li>
+                      <li class="nav-item">
+                            <a href="{% url 'signup' %}"  style="color: white; text-decoration: none; padding: 2em;">Регистрация</a>
+                       </li>
+                    {% endif %}
                 </ul>
             </div>
         </div>

@@ -1,0 +1,26 @@
+<!-- accounts/templates/registration/login.html -->
+{% extends 'base.html' %}
+
+{% block title %}Вход в систему{% endblock %}
+
+{% block 'content' %}
+<div class="auth-container">
+    <h2>🔐 Вход в систему</h2>
+
+    {% if form.errors %}
+        <div class="errorlist">
+            <p>Неверное имя пользователя или пароль</p>
+        </div>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Войти</button>
+    </form>
+
+    <div class="auth-links">
+        <p>Нет аккаунта? <a href="{% url 'signup' %}">Зарегистрироваться</a></p>
+    </div>
+</div>
+{% endblock %}
